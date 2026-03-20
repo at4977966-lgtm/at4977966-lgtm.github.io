@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RefreshCw, Search, MoreHorizontal, AlertTriangle, Eye, Activity, ShieldAlert, Sparkles, X } from 'lucide-react';
+import { RefreshCw, Search, MoreHorizontal, AlertTriangle, Eye, Activity, ShieldAlert, X } from 'lucide-react';
 import { Button, Badge, Input, Card } from '../components/UI';
 import { Player, PlayerStatus } from '../types';
-import { analyzePlayerRisk } from '../services/geminiService';
 import { useAuth } from '../auth/AuthProvider';
 
 // Mock Data Generator
@@ -30,8 +29,6 @@ const Dashboard: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<{ score: number, text: string } | null>(null);
 
   // Initialize Data
   useEffect(() => {
@@ -60,22 +57,6 @@ const Dashboard: React.FC = () => {
 
     return () => clearInterval(interval);
   }, []);
-
-  const handleAnalyze = async () => {
-    if (!selectedPlayer) return;
-    setIsAnalyzing(true);
-    setAnalysisResult(null);
-    
-    // Simulate screenshot check logic + Gemini
-    // We pass the player data to the AI service
-    const result = await analyzePlayerRisk(selectedPlayer);
-    
-    setAnalysisResult({
-      score: result.riskScore,
-      text: result.analysis
-    });
-    setIsAnalyzing(false);
-  };
 
   const getStatusBadge = (status: PlayerStatus) => {
     switch (status) {
@@ -182,10 +163,7 @@ const Dashboard: React.FC = () => {
                     <Button 
                       variant="ghost" 
                       className="h-8 px-2" 
-                      onClick={() => {
-                        setSelectedPlayer(player);
-                        setAnalysisResult(null);
-                      }}
+                      onClick={() => setSelectedPlayer(player)}
                     >
                       <Eye className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
                     </Button>
@@ -261,32 +239,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* AI Analysis Section */}
-              <div className="pt-4 border-t border-slate-200 dark:border-white/10">
-                {!analysisResult ? (
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-sm font-medium text-slate-900 dark:text-white">AI Risk Assessment</h3>
-                      <p className="text-xs text-slate-500 dark:text-gray-400">Use Gemini models to analyze player telemetry patterns.</p>
-                    </div>
-                    <Button onClick={handleAnalyze} isLoading={isAnalyzing} icon={<Sparkles className="w-4 h-4" />}>
-                      Analyze Risk
-                    </Button>
-                  </div>
-                ) : (
-                  <div className={`p-4 rounded-lg border animate-enter ${analysisResult.score > 50 ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/20' : 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20'}`}>
-                    <div className="flex items-center justify-between mb-2">
-                       <h4 className={`text-sm font-bold ${analysisResult.score > 50 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-                         Risk Score: {analysisResult.score}/100
-                       </h4>
-                       <Button variant="ghost" className="h-6 text-xs" onClick={handleAnalyze}>Re-analyze</Button>
-                    </div>
-                    <p className="text-sm text-slate-700 dark:text-gray-300 leading-relaxed">
-                      {analysisResult.text}
-                    </p>
-                  </div>
-                )}
-              </div>
+              <div className="pt-4 border-t border-slate-200 dark:border-white/10"></div>
             </div>
 
             {/* Modal Actions */}
