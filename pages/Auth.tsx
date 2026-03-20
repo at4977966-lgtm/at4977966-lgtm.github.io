@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, Button, Input } from '../components/UI';
-import { LogIn, Mail, Lock, UserPlus, Ghost } from 'lucide-react';
+import { LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 
 const Auth: React.FC = () => {
-  const { signInWithGoogle, signInWithEmailAndPassword, signUpWithEmailAndPassword, signInAnonymously } = useAuth();
+  const { signInWithGoogle, signInWithEmailAndPassword, signUpWithEmailAndPassword } = useAuth();
   const [search] = useSearchParams();
   const navigate = useNavigate();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -17,7 +17,8 @@ const Auth: React.FC = () => {
   const redirectTo = decodeURIComponent(search.get('redirect') || '/');
 
   const handleSuccess = () => {
-    navigate(redirectTo || '/', { replace: true });
+    const target = redirectTo && redirectTo !== '/' ? redirectTo : '/dashboard';
+    navigate(target, { replace: true });
   };
 
   const handleGoogle = async () => {
@@ -51,19 +52,6 @@ const Auth: React.FC = () => {
     }
   };
 
-  const handleAnonymous = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      await signInAnonymously();
-      handleSuccess();
-    } catch (e: any) {
-      setError(e?.message || 'Anonymous sign in failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen pt-24 pb-12 px-6 flex items-center justify-center animate-enter">
       <Card className="w-full max-w-md space-y-6">
@@ -75,9 +63,6 @@ const Auth: React.FC = () => {
         <div className="grid gap-3">
           <Button onClick={handleGoogle} isLoading={loading} className="w-full" icon={<LogIn className="w-4 h-4" />}>
             Continue with Google
-          </Button>
-          <Button onClick={handleAnonymous} isLoading={loading} className="w-full" variant="secondary" icon={<Ghost className="w-4 h-4" />}>
-            Continue as Guest
           </Button>
         </div>
 

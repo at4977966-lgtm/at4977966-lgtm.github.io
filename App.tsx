@@ -12,6 +12,7 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Support from './pages/Support';
 import ProtectedRoute from './components/ProtectedRoute';
+import HomeGate from './components/HomeGate';
 
 const App: React.FC = () => {
   return (
@@ -19,7 +20,7 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-slate-50 dark:bg-[#0D1117] text-slate-900 dark:text-gray-200 font-sans selection:bg-primary/30 transition-colors duration-300">
         <Navbar />
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<HomeGate />} />
           <Route
             path="/create"
             element={

@@ -6,7 +6,6 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword as fbSignInWithEmailAndPassword,
   createUserWithEmailAndPassword as fbCreateUserWithEmailAndPassword,
-  signInAnonymously as fbSignInAnonymously,
   signOut as fbSignOut,
   User,
 } from 'firebase/auth';
@@ -17,7 +16,6 @@ type AuthContextValue = {
   signInWithGoogle: () => Promise<void>;
   signInWithEmailAndPassword: (email: string, password: string) => Promise<void>;
   signUpWithEmailAndPassword: (email: string, password: string) => Promise<void>;
-  signInAnonymously: () => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -55,11 +53,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await fbCreateUserWithEmailAndPassword(auth, email, password);
   };
 
-  const signInAnonymously = async () => {
-    if (!auth) throw new Error('Authentication is not configured');
-    await fbSignInAnonymously(auth);
-  };
-
   const signOut = async () => {
     if (!auth) throw new Error('Authentication is not configured');
     await fbSignOut(auth);
@@ -72,7 +65,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       signInWithGoogle,
       signInWithEmailAndPassword,
       signUpWithEmailAndPassword,
-      signInAnonymously,
       signOut,
     }),
     [user, loading]

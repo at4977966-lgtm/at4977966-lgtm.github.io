@@ -3,6 +3,7 @@ import { RefreshCw, Search, MoreHorizontal, AlertTriangle, Eye, Activity, Shield
 import { Button, Badge, Input, Card } from '../components/UI';
 import { Player, PlayerStatus } from '../types';
 import { analyzePlayerRisk } from '../services/geminiService';
+import { useAuth } from '../auth/AuthProvider';
 
 // Mock Data Generator
 const generatePlayers = (count: number): Player[] => {
@@ -25,6 +26,7 @@ const generatePlayers = (count: number): Player[] => {
 };
 
 const Dashboard: React.FC = () => {
+  const { user } = useAuth();
   const [players, setPlayers] = useState<Player[]>([]);
   const [search, setSearch] = useState('');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -93,6 +95,28 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen pt-24 pb-12 px-6 max-w-7xl mx-auto animate-enter">
+      {/* Simple Welcome Card */}
+      <Card className="mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              Welcome {user?.displayName || user?.email || 'Player'}
+            </h2>
+            <p className="text-slate-500 dark:text-gray-400 text-sm">
+              Quick actions to get started.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <a href="#/create">
+              <Button>New Tournament</Button>
+            </a>
+            <a href="#/join">
+              <Button variant="secondary">Join Lobby</Button>
+            </a>
+          </div>
+        </div>
+      </Card>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>

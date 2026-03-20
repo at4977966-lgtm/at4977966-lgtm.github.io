@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Shield, LayoutDashboard, PlusCircle, LogIn, Lock, Moon, Sun } from 'lucide-react';
+import { Shield, LayoutDashboard, PlusCircle, LogIn, LogOut, Lock, Moon, Sun } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../auth/AuthProvider';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
+  const { user, signOut } = useAuth();
   
   // Theme State
   const [isDark, setIsDark] = useState(() => {
@@ -62,12 +64,29 @@ export const Navbar: React.FC = () => {
           {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
 
-        <Link to="/auth">
-          <button className="text-sm font-medium text-slate-500 dark:text-gray-400 hover:text-primary transition-colors flex items-center gap-2 group">
-            <LogIn className="w-4 h-4 group-hover:text-primary group-hover:translate-x-1 transition-all" /> Player Login
-          </button>
-        </Link>
-        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-800 dark:to-gray-700 border border-slate-300 dark:border-white/10 shadow-lg cursor-pointer hover:ring-2 ring-primary/50 transition-all"></div>
+        {!user ? (
+          <Link to="/auth">
+            <button className="text-sm font-medium text-slate-500 dark:text-gray-400 hover:text-primary transition-colors flex items-center gap-2 group">
+              <LogIn className="w-4 h-4 group-hover:text-primary group-hover:translate-x-1 transition-all" /> Login
+            </button>
+          </Link>
+        ) : (
+          <>
+            <button
+              onClick={() => signOut()}
+              className="text-sm font-medium text-slate-500 dark:text-gray-400 hover:text-primary transition-colors flex items-center gap-2 group"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4 group-hover:text-primary transition-all" /> Logout
+            </button>
+            <div
+              className="w-8 h-8 rounded-full bg-gradient-to-r from-slate-200 to-slate-300 dark:from-gray-800 dark:to-gray-700 border border-slate-300 dark:border-white/10 shadow-lg grid place-items-center text-xs font-bold text-slate-700 dark:text-gray-300"
+              title={user.displayName || user.email || 'User'}
+            >
+              {(user.displayName?.[0] || user.email?.[0] || 'U').toUpperCase()}
+            </div>
+          </>
+        )}
       </div>
     </nav>
   );
