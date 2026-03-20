@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JustMe | Integrity System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              // Dark Mode Palette
+              dark: {
+                bg: '#0D1117',
+                surface: '#161b22',
+                surfaceHighlight: '#21262d',
+              },
+              // Light Mode Palette
+              light: {
+                bg: '#F8FAFC',
+                surface: '#FFFFFF',
+                surfaceHighlight: '#F1F5F9',
+              },
+              primary: '#00F2FF', // Neon Cyan
+              primaryHover: '#00cbd6',
+              secondary: '#CCFF00', // Cyber Lime
+              danger: '#ef4444',
+            },
+            animation: {
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'glow': 'glow 2s ease-in-out infinite alternate',
+              'float': 'float 6s ease-in-out infinite',
+              'enter': 'enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            },
+            keyframes: {
+              glow: {
+                '0%': { boxShadow: '0 0 5px #00F2FF, 0 0 10px #00F2FF' },
+                '100%': { boxShadow: '0 0 20px #00F2FF, 0 0 25px #00F2FF' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              enter: {
+                '0%': { opacity: 0, transform: 'translateY(10px) scale(0.98)' },
+                '100%': { opacity: 1, transform: 'translateY(0) scale(1)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        /* Default to dark mode colors initially to prevent flash, script handles toggle */
+        background-color: #0D1117; 
+        color: #e2e8f0;
+      }
+      
+      /* Global Smooth Transition for Theme Switching */
+      *, *::before, *::after {
+        transition-property: background-color, border-color, color, fill, stroke, transform, opacity, box-shadow;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #30363d; 
+        border-radius: 4px;
+      }
+      html:not(.dark) ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #484f58; 
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.570.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
