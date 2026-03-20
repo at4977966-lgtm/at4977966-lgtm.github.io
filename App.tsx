@@ -5,11 +5,13 @@ import Landing from './pages/Landing';
 import CreateTournament from './pages/CreateTournament';
 import Dashboard from './pages/Dashboard';
 import JoinTournament from './pages/JoinTournament';
+import Auth from './pages/Auth';
 import Security from './pages/Security';
 import FairPlay from './pages/FairPlay';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Support from './pages/Support';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App: React.FC = () => {
   return (
@@ -18,9 +20,17 @@ const App: React.FC = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/create" element={<CreateTournament />} />
+          <Route
+            path="/create"
+            element={
+              <ProtectedRoute>
+                <CreateTournament />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/join" element={<JoinTournament />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/security" element={<Security />} />
           <Route path="/fair-play" element={<FairPlay />} />
           <Route path="/privacy" element={<Privacy />} />

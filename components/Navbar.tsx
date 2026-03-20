@@ -62,7 +62,7 @@ export const Navbar: React.FC = () => {
           {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
 
-        <Link to="/join">
+        <Link to="/auth">
           <button className="text-sm font-medium text-slate-500 dark:text-gray-400 hover:text-primary transition-colors flex items-center gap-2 group">
             <LogIn className="w-4 h-4 group-hover:text-primary group-hover:translate-x-1 transition-all" /> Player Login
           </button>

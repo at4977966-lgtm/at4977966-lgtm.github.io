@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { Lock, AlertCircle, Terminal, LogIn } from 'lucide-react';
 import { Button, Input, Card } from '../components/UI';
+import { useAuth } from '../auth/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const JoinTournament: React.FC = () => {
   const [tid, setTid] = useState('');
   const [loading, setLoading] = useState(false);
   const [joined, setJoined] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      navigate('/auth?redirect=/join');
+      return;
+    }
     setLoading(true);
     // Simulate connection
     setTimeout(() => {
