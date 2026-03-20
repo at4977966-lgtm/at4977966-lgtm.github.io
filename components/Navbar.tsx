@@ -6,7 +6,8 @@ import { useAuth } from '../auth/AuthProvider';
 export const Navbar: React.FC = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
-  const { user, signOut } = useAuth();
+  const { user, signOut, status } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
   
   // Theme State
   const [isDark, setIsDark] = useState(() => {
@@ -73,7 +74,14 @@ export const Navbar: React.FC = () => {
         ) : (
           <>
             <button
-              onClick={() => signOut()}
+              onClick={async () => {
+                setLoggingOut(true);
+                setTimeout(async () => {
+                  await signOut();
+                  setLoggingOut(false);
+                  window.location.hash = '#/';
+                }, 600);
+              }}
               className="text-sm font-medium text-slate-500 dark:text-gray-400 hover:text-primary transition-colors flex items-center gap-2 group"
               title="Logout"
             >
@@ -85,6 +93,11 @@ export const Navbar: React.FC = () => {
             >
               {(user.displayName?.[0] || user.email?.[0] || 'U').toUpperCase()}
             </div>
+            {loggingOut && (
+              <div className="absolute top-20 right-6 bg-slate-900/80 text-white text-xs px-3 py-1.5 rounded-md shadow-lg animate-enter">
+                Signing out…
+              </div>
+            )}
           </>
         )}
       </div>

@@ -5,7 +5,7 @@ import { LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 
 const Auth: React.FC = () => {
-  const { signInWithGoogle, signInWithEmailAndPassword, signUpWithEmailAndPassword } = useAuth();
+  const { signInWithGoogle, signInWithEmailAndPassword, signUpWithEmailAndPassword, configured, status } = useAuth();
   const [search] = useSearchParams();
   const navigate = useNavigate();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -61,7 +61,7 @@ const Auth: React.FC = () => {
         </div>
 
         <div className="grid gap-3">
-          <Button onClick={handleGoogle} isLoading={loading} className="w-full" icon={<LogIn className="w-4 h-4" />}>
+          <Button onClick={handleGoogle} disabled={!configured} isLoading={loading || status === 'signing-in'} className="w-full" icon={<LogIn className="w-4 h-4" />}>
             Continue with Google
           </Button>
         </div>
@@ -89,7 +89,7 @@ const Auth: React.FC = () => {
             required
           />
           {error && <div className="text-danger text-sm">{error}</div>}
-          <Button type="submit" isLoading={loading} className="w-full" icon={mode === 'signin' ? <LogIn className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}>
+          <Button type="submit" disabled={!configured} isLoading={loading || status === 'signing-in'} className="w-full" icon={mode === 'signin' ? <LogIn className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}>
             {mode === 'signin' ? 'Sign In' : 'Create Account'}
           </Button>
         </form>

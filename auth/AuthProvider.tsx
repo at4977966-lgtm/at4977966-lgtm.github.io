@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { auth } from '../services/firebase';
+import { auth as rawAuth, initAuth } from '../services/firebase';
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -13,6 +13,9 @@ import {
 type AuthContextValue = {
   user: User | null;
   loading: boolean;
+  configured: boolean;
+  status: 'idle' | 'signing-in' | 'signing-out' | 'error';
+  error: string | null;
   signInWithGoogle: () => Promise<void>;
   signInWithEmailAndPassword: (email: string, password: string) => Promise<void>;
   signUpWithEmailAndPassword: (email: string, password: string) => Promise<void>;
@@ -24,50 +27,105 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [configured, setConfigured] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'signing-in' | 'signing-out' | 'error'>('idle');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return () => unsub();
+    let unsub: (() => void) | undefined;
+    const boot = async () => {
+      const a = rawAuth ?? (await initAuth());
+      if (!a) {
+        setConfigured(false);
+        setLoading(false);
+        return;
+      }
+      setConfigured(true);
+      unsub = onAuthStateChanged(a, (u) => {
+        setUser(u);
+        setLoading(false);
+      });
+    };
+    boot();
+    return () => {
+      if (unsub) unsub();
+    };
   }, []);
 
   const signInWithGoogle = async () => {
-    if (!auth) throw new Error('Authentication is not configured');
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    try {
+      setStatus('signing-in');
+      setError(null);
+      const a = rawAuth ?? (await initAuth());
+      if (!a) throw new Error('Authentication is not configured');
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(a, provider);
+      setStatus('idle');
+    } catch (e: any) {
+      setStatus('error');
+      setError(e?.message || 'Sign in failed');
+      throw e;
+    }
   };
 
   const signInWithEmailAndPassword = async (email: string, password: string) => {
-    if (!auth) throw new Error('Authentication is not configured');
-    await fbSignInWithEmailAndPassword(auth, email, password);
+    try {
+      setStatus('signing-in');
+      setError(null);
+      const a = rawAuth ?? (await initAuth());
+      if (!a) throw new Error('Authentication is not configured');
+      await fbSignInWithEmailAndPassword(a, email, password);
+      setStatus('idle');
+    } catch (e: any) {
+      setStatus('error');
+      setError(e?.message || 'Sign in failed');
+      throw e;
+    }
   };
 
   const signUpWithEmailAndPassword = async (email: string, password: string) => {
-    if (!auth) throw new Error('Authentication is not configured');
-    await fbCreateUserWithEmailAndPassword(auth, email, password);
+    try {
+      setStatus('signing-in');
+      setError(null);
+      const a = rawAuth ?? (await initAuth());
+      if (!a) throw new Error('Authentication is not configured');
+      await fbCreateUserWithEmailAndPassword(a, email, password);
+      setStatus('idle');
+    } catch (e: any) {
+      setStatus('error');
+      setError(e?.message || 'Sign up failed');
+      throw e;
+    }
   };
 
   const signOut = async () => {
-    if (!auth) throw new Error('Authentication is not configured');
-    await fbSignOut(auth);
+    try {
+      setStatus('signing-out');
+      setError(null);
+      const a = rawAuth ?? (await initAuth());
+      if (!a) throw new Error('Authentication is not configured');
+      await fbSignOut(a);
+      setStatus('idle');
+    } catch (e: any) {
+      setStatus('error');
+      setError(e?.message || 'Sign out failed');
+      throw e;
+    }
   };
 
   const value = useMemo(
     () => ({
       user,
       loading,
+      configured,
+      status,
+      error,
       signInWithGoogle,
       signInWithEmailAndPassword,
       signUpWithEmailAndPassword,
       signOut,
     }),
-    [user, loading]
+    [user, loading, configured, status, error]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
