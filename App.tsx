@@ -39,6 +39,9 @@ const App: React.FC = () => {
           <Route path="/support" element={<Support />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <footer style={{ textAlign: "center", marginTop: "40px", padding: "20px" }}>
+  <a href="/terms">Terms</a> | <a href="/privacy">Privacy</a>
+</footer>
       </div>
     </Router>
   );
